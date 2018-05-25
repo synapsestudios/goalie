@@ -26,5 +26,11 @@ describe('Goalie', () => {
     it('appends api version response header when client and api major version match exactly');
     it('responds with a 412 when the client and api major version do not match exactly');
   });
+
+  describe('callback', () => {
+    it('calls the callback with request api-version and current api version');
+    it('appends api version response header when callback returns true');
+    it('responds with a 412 when the callback returns false');
+  })
 });
 
