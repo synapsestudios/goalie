@@ -130,9 +130,60 @@ describe('Goalie', () => {
   });
 
   describe('callback', () => {
-    it('calls the callback with request api-version and current api version');
-    it('appends api version response header when callback returns true');
-    it('responds with a 412 when the callback returns false');
-    it('replies with a 500 error when the callback throws errors');
+    it('calls the callback with request api-version and current api version', done => {
+      let called = false;
+      const apiVersion = 'v1.0.0';
+      const requestVersion = 'v1.2.3';
+      const server = makeServer({
+        apiVersion,
+        compatabilityMethod: (testRequestVersion, testApiVersion) => {
+          called = true;
+          expect(testApiVersion).to.equal(apiVersion);
+          expect(testRequestVersion).to.equal(requestVersion);
+        },
+      });
+
+      server.inject({
+        url: '/',
+        headers: { 'api-version': requestVersion },
+      }, res => {
+        expect(called).to.be.true();
+        done();
+      });
+    });
+
+    it('appends api version response header when callback returns true', done => {
+      const apiVersion = 'v1.0.0';
+      const server = makeServer({
+        apiVersion,
+        compatabilityMethod: () => true,
+      });
+
+      server.inject({
+        url: '/',
+        headers: { 'api-version': apiVersion },
+      }, res => {
+        expect(res.statusCode).to.equal(200);
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
+
+    it('responds with a 412 when the callback returns false', done => {
+      const apiVersion = 'v1.0.0';
+      const server = makeServer({
+        apiVersion,
+        compatabilityMethod: () => false,
+      });
+
+      server.inject({
+        url: '/',
+        headers: { 'api-version': apiVersion },
+      }, res => {
+        expect(res.statusCode).to.equal(412);
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
   });
 });
