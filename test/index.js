@@ -140,38 +140,34 @@ describe('Goalie', () => {
       expect(calledValues.testRequestVersion).to.equal(requestVersion);
     });
 
-    it('appends api version response header when callback returns true', done => {
+    it('appends api version response header when callback returns true', async () => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({
+      const server = await makeServer({
         apiVersion,
         compatabilityMethod: () => true,
       });
 
-      server.inject({
+      const res = await server.inject({
         url: '/',
         headers: { 'api-version': apiVersion },
-      }, res => {
-        expect(res.statusCode).to.equal(200);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
       });
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['api-version']).to.equal(apiVersion);
     });
 
-    it('responds with a 412 when the callback returns false', done => {
+    it('responds with a 412 when the callback returns false', async () => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({
+      const server = await makeServer({
         apiVersion,
         compatabilityMethod: () => false,
       });
 
-      server.inject({
+      const res = await server.inject({
         url: '/',
         headers: { 'api-version': apiVersion },
-      }, res => {
-        expect(res.statusCode).to.equal(412);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
       });
+      expect(res.statusCode).to.equal(412);
+      expect(res.headers['api-version']).to.equal(apiVersion);
     });
   });
 });
