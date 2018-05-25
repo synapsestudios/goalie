@@ -100,16 +100,14 @@ describe('Goalie', () => {
     for (let i = 0; i < cases.length; ++i) {
       const testCase = cases[i];
 
-      it(`returns ${testCase.code} when apiVersion is ${testCase.apiVersion} and request version is ${testCase.requestVersion}`, done => {
-        const server = makeServer({ apiVersion: testCase.apiVersion });
-        server.inject({
+      it(`returns ${testCase.code} when apiVersion is ${testCase.apiVersion} and request version is ${testCase.requestVersion}`, async () => {
+        const server = await makeServer({ apiVersion: testCase.apiVersion });
+        const res = await server.inject({
           url: '/',
           headers: { 'api-version': testCase.requestVersion },
-        }, res => {
-          expect(res.statusCode).to.equal(testCase.code);
-          expect(res.headers['api-version']).to.equal(testCase.apiVersion);
-          done();
         });
+        expect(res.statusCode).to.equal(testCase.code);
+        expect(res.headers['api-version']).to.equal(testCase.apiVersion);
       });
     }
   });
