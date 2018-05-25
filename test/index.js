@@ -13,7 +13,6 @@ const makeServer = (options, cb) => {
   }, cb);
 
   server.route({ method: 'GET', path: '/', handler: (request, reply) => {
-    console.log('called');
     return reply('Success!')
   } });
   return server;
