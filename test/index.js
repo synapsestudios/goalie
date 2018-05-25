@@ -115,15 +115,19 @@ describe('Goalie', () => {
   describe('callback', () => {
     it('calls the callback with request api-version and current api version', async () => {
       let called = false;
+      let calledValues = {};
+
       const apiVersion = 'v1.0.0';
       const requestVersion = 'v1.2.3';
+
       const server = await makeServer({
         apiVersion,
         compatabilityMethod: (testRequestVersion, testApiVersion) => {
           called = true;
-          expect(true).to.equal(false);
-          expect(testApiVersion).to.equal(apiVersion);
-          expect(testRequestVersion).to.equal(requestVersion);
+          calledValues = {
+            testApiVersion,
+            testRequestVersion,
+          };
         },
       });
 
@@ -132,6 +136,8 @@ describe('Goalie', () => {
         headers: { 'api-version': requestVersion },
       });
       expect(called).to.be.true();
+      expect(calledValues.testApiVersion).to.equal(apiVersion);
+      expect(calledValues.testRequestVersion).to.equal(requestVersion);
     });
 
     it('appends api version response header when callback returns true', done => {
