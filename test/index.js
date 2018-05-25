@@ -116,14 +116,13 @@ describe('Goalie', () => {
       const testCase = cases[i];
 
       it(`returns ${testCase.code} when apiVersion is ${testCase.apiVersion} and request version is ${testCase.requestVersion}`, done => {
-        const apiVersion = 'v1.0.0';
-        const server = makeServer({ apiVersion });
+        const server = makeServer({ apiVersion: testCase.apiVersion });
         server.inject({
           url: '/',
-          headers: { 'api-version': '^v1.0.0' },
+          headers: { 'api-version': testCase.requestVersion },
         }, res => {
-          expect(res.statusCode).to.equal(200);
-          expect(res.headers['api-version']).to.equal(apiVersion);
+          expect(res.statusCode).to.equal(testCase.code);
+          expect(res.headers['api-version']).to.equal(testCase.apiVersion);
           done();
         });
       });
