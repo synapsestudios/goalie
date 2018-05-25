@@ -1,5 +1,6 @@
 const Hapi = require('hapi');
 const Goalie = require('../lib');
+const Boom = require('boom');
 const { expect } = require('code');
 const { describe, it } = exports.lab = require('lab').script();
 
@@ -43,6 +44,24 @@ describe('Goalie', () => {
       expect(res.headers['api-version']).to.equal(apiVersion);
       done();
     });
+  });
+
+  it('appends api-version to error response', done => {
+    const server = new Hapi.Server();
+    server.connection({port: 80});
+    server.register({
+      register: Goalie,
+      options: { apiVersion: 'v1.0.0' }
+    });
+    server.route({ method: 'GET', path: '/', handler: (request, reply) => {
+      return reply(Boom.badRequest());
+    }});
+
+    server.inject('/', res => {
+      expect(res.statusCode).to.equal(500);
+      expect(res.headers['api-version']).to.equal('v1.0.0');
+      done();
+    })
   });
 
   describe('strict', () => {
