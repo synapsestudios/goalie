@@ -31,6 +31,7 @@ describe('Goalie', () => {
   it('does nothing if api version is not supplied', done => {
     const server = makeServer();
     server.inject('/', res => {
+      expect(res.statusCode).to.equal(200);
       expect(res.headers['api-version']).to.not.exist();
       done();
     });
@@ -40,6 +41,7 @@ describe('Goalie', () => {
     const apiVersion = 'v1.0.0';
     const server = makeServer({ apiVersion });
     server.inject('/', res => {
+      expect(res.statusCode).to.equal(200);
       expect(res.headers['api-version']).to.equal(apiVersion);
       done();
     });
@@ -66,11 +68,12 @@ describe('Goalie', () => {
   describe('strict', () => {
     it('appends api version response header when client and api versions match exactly', done => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({ apiVersion });
+      const server = makeServer({ apiVersion, compatabilityMethod: 'strict' });
       server.inject({
         url: '/',
         headers: { 'api-version': apiVersion },
       }, res => {
+        expect(res.statusCode).to.equal(200);
         expect(res.headers['api-version']).to.equal(apiVersion);
         done();
       });
@@ -78,7 +81,7 @@ describe('Goalie', () => {
 
     it('responds with a 412 when the client and api versions do not match exactly', done => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({ apiVersion });
+      const server = makeServer({ apiVersion, compatabilityMethod: 'strict' });
       server.inject({
         url: '/',
         headers: { 'api-version': 'not-v1.0.0' },
@@ -91,13 +94,45 @@ describe('Goalie', () => {
   });
 
   describe('semver', () => {
-    it('appends api version response header when client and api major version match exactly');
-    it('responds with a 412 when the client and api major version do not match exactly');
+    const cases = [{
+      apiVersion: 'v1.0.0',
+      requestVersion: '^v1.0.0',
+      code: 200,
+    }, {
+      apiVersion: 'v2.0.0',
+      requestVersion: '^v1.0.0',
+      code: 412,
+    }, {
+      apiVersion: 'v2.0.0',
+      requestVersion: 'gobbledegook',
+      code: 412,
+    }, {
+      apiVersion: 'v2.0.0',
+      requestVersion: '^v2.x',
+      code: 200,
+    }];
+
+    for (let i = 0; i < cases.length; ++i) {
+      const testCase = cases[i];
+
+      it(`returns ${testCase.code} when apiVersion is ${testCase.apiVersion} and request version is ${testCase.requestVersion}`, done => {
+        const server = makeServer({ apiVersion: testCase.apiVersion });
+        server.inject({
+          url: '/',
+          headers: { 'api-version': testCase.requestVersion },
+        }, res => {
+          expect(res.statusCode).to.equal(testCase.code);
+          expect(res.headers['api-version']).to.equal(testCase.apiVersion);
+          done();
+        });
+      });
+    }
   });
 
   describe('callback', () => {
     it('calls the callback with request api-version and current api version');
     it('appends api version response header when callback returns true');
     it('responds with a 412 when the callback returns false');
+    it('replies with a 500 error when the callback throws errors');
   });
 });
