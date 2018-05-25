@@ -121,12 +121,13 @@ describe('Goalie', () => {
         apiVersion,
         compatabilityMethod: (testRequestVersion, testApiVersion) => {
           called = true;
+          expect(true).to.equal(false);
           expect(testApiVersion).to.equal(apiVersion);
           expect(testRequestVersion).to.equal(requestVersion);
         },
       });
 
-      const res = await server.inject({
+      await server.inject({
         url: '/',
         headers: { 'api-version': requestVersion },
       });
