@@ -13,10 +13,10 @@ const makeServer = (options, cb) => {
   }, cb);
 
   server.route({ method: 'GET', path: '/', handler: (request, reply) => {
-    return reply('Success!')
+    return reply('Success!');
   } });
   return server;
-}
+};
 
 describe('smoke test', () => {
   it('registers without errors', done => {
@@ -33,7 +33,7 @@ describe('Goalie', () => {
     server.inject('/', res => {
       expect(res.headers['api-version']).to.not.exist();
       done();
-    })
+    });
   });
 
   it('appends api version response header when api-version request header is not present', done => {
@@ -47,20 +47,20 @@ describe('Goalie', () => {
 
   it('appends api-version to error response', done => {
     const server = new Hapi.Server();
-    server.connection({port: 80});
+    server.connection({ port: 80 });
     server.register({
       register: Goalie,
-      options: { apiVersion: 'v1.0.0' }
+      options: { apiVersion: 'v1.0.0' },
     });
     server.route({ method: 'GET', path: '/', handler: (request, reply) => {
       return reply(Boom.badRequest());
-    }});
+    } });
 
     server.inject('/', res => {
       expect(res.statusCode).to.equal(400);
       expect(res.headers['api-version']).to.equal('v1.0.0');
       done();
-    })
+    });
   });
 
   describe('strict', () => {
@@ -99,5 +99,5 @@ describe('Goalie', () => {
     it('calls the callback with request api-version and current api version');
     it('appends api version response header when callback returns true');
     it('responds with a 412 when the callback returns false');
-  })
+  });
 });
