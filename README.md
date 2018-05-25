@@ -52,3 +52,10 @@ server.register({
   }
 });
 ```
+
+## Options
+
+| name | description |
+| ---- | ----------- |
+| apiVersion | The current version of the api |
+| compatibilyMethod | The method that goalie will use to determine version compatability. Defaults to 'semver' |
