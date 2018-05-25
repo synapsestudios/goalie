@@ -131,7 +131,28 @@ describe('Goalie', () => {
   });
 
   describe('callback', () => {
-    it('calls the callback with request api-version and current api version');
+    it('calls the callback with request api-version and current api version', done => {
+      let called = false;
+      const apiVersion = 'v1.0.0';
+      const server = makeServer({
+        apiVersion,
+        compatabilityMethod: (testRequestVersion, testApiVersion) => {
+          called = true;
+          expect(testApiVersion).to.equal(apiVersion);
+          expect(testRequestVersion).to.equal(apiVersion);
+        },
+      });
+
+      server.inject({
+        url: '/',
+        headers: { 'api-version': apiVersion },
+      }, res => {
+        expect(called).to.be.true();
+        expect(res.statusCode).to.equal(200);
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
     it('appends api version response header when callback returns true');
     it('responds with a 412 when the callback returns false');
     it('replies with a 500 error when the callback throws errors');
