@@ -58,7 +58,7 @@ describe('Goalie', () => {
     }});
 
     server.inject('/', res => {
-      expect(res.statusCode).to.equal(500);
+      expect(res.statusCode).to.equal(400);
       expect(res.headers['api-version']).to.equal('v1.0.0');
       done();
     })
