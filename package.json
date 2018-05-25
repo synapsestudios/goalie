@@ -19,11 +19,11 @@
   "devDependencies": {
     "code": "^5.2.0",
     "eslint": "^4.19.1",
-    "hapi": "^16.6.3",
-    "lab": "^14.3.4"
+    "hapi": "^17.5.0",
+    "lab": "^15.4.5"
   },
   "peerDependencies": {
-    "hapi": "16.x.x"
+    "hapi": "17.x.x"
   },
   "dependencies": {
     "semver": "^5.5.0"
