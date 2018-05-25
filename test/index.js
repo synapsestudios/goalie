@@ -31,6 +31,7 @@ describe('Goalie', () => {
   it('does nothing if api version is not supplied', done => {
     const server = makeServer();
     server.inject('/', res => {
+      expect(res.statusCode).to.equal(200);
       expect(res.headers['api-version']).to.not.exist();
       done();
     });
@@ -40,6 +41,7 @@ describe('Goalie', () => {
     const apiVersion = 'v1.0.0';
     const server = makeServer({ apiVersion });
     server.inject('/', res => {
+      expect(res.statusCode).to.equal(200);
       expect(res.headers['api-version']).to.equal(apiVersion);
       done();
     });
@@ -71,6 +73,7 @@ describe('Goalie', () => {
         url: '/',
         headers: { 'api-version': apiVersion },
       }, res => {
+        expect(res.statusCode).to.equal(200);
         expect(res.headers['api-version']).to.equal(apiVersion);
         done();
       });
@@ -91,9 +94,44 @@ describe('Goalie', () => {
   });
 
   describe('semver', () => {
-    it('appends api version response header when client and api major version match exactly');
-    it('responds with a 412 when the client and api major version do not match exactly');
-    it('does not fail spectacularly when the request api version is not a well formatted semver string');
+    it('appends api version response header when client semver is satisfied by the api', done => {
+      const apiVersion = 'v1.0.0';
+      const server = makeServer({ apiVersion });
+      server.inject({
+        url: '/',
+        headers: { 'api-version': '^v1.0.0' },
+      }, res => {
+        expect(res.statusCode).to.equal(200);
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
+
+    it('responds with a 412 when the client semver is not satisfied by the api', done => {
+      const apiVersion = 'v2.0.0';
+      const server = makeServer({ apiVersion });
+      server.inject({
+        url: '/',
+        headers: { 'api-version': '^v1.0.0' },
+      }, res => {
+        expect(res.statusCode).to.equal(412);
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
+
+    it('does not fail spectacularly when the request api version is not a well formatted semver string', done => {
+      const apiVersion = 'v2.0.0';
+      const server = makeServer({ apiVersion });
+      server.inject({
+        url: '/',
+        headers: { 'api-version': 'GOBBLEDEGOOK' },
+      }, res => {
+        expect(res.statusCode).to.equal(412);
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
   });
 
   describe('callback', () => {
