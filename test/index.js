@@ -29,32 +29,27 @@ describe('Goalie', () => {
     expect(res.headers['api-version']).to.not.exist();
   });
 
-  it('appends api version response header when api-version request header is not present', done => {
+  it('appends api version response header when api-version request header is not present', async () => {
     const apiVersion = 'v1.0.0';
-    const server = makeServer({ apiVersion });
-    server.inject('/', res => {
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['api-version']).to.equal(apiVersion);
-      done();
-    });
+    const server = await makeServer({ apiVersion });
+    const res = await server.inject('/');
+
+    expect(res.statusCode).to.equal(200);
+    expect(res.headers['api-version']).to.equal(apiVersion);
   });
 
-  it('appends api-version to error response', done => {
-    const server = new Hapi.Server();
-    server.connection({ port: 80 });
-    server.register({
-      register: Goalie,
+  it('appends api-version to error response', async () => {
+    const server = Hapi.Server({ port: 80 });
+    await server.register({
+      plugin: Goalie,
       options: { apiVersion: 'v1.0.0' },
     });
-    server.route({ method: 'GET', path: '/', handler: (request, reply) => {
-      return reply(Boom.badRequest());
-    } });
 
-    server.inject('/', res => {
-      expect(res.statusCode).to.equal(400);
-      expect(res.headers['api-version']).to.equal('v1.0.0');
-      done();
-    });
+    server.route({ method: 'GET', path: '/', handler: (request, reply) => Boom.badRequest() });
+
+    const res = await server.inject('/');
+    expect(res.statusCode).to.equal(400);
+    expect(res.headers['api-version']).to.equal('v1.0.0');
   });
 
   describe('strict', () => {
