@@ -1,7 +1,7 @@
 const Hapi = require('hapi');
 const Goalie = require('../lib');
 const { expect } = require('code');
-const { describe, before, after, it } = exports.lab = require('lab').script();
+const { describe, it } = exports.lab = require('lab').script();
 
 describe('smoke test', () => {
   it('registers without errors', () => {
