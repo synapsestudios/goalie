@@ -3,19 +3,36 @@ const Goalie = require('../lib');
 const { expect } = require('code');
 const { describe, it } = exports.lab = require('lab').script();
 
+const makeServer = (options, cb) => {
+  const server = new Hapi.Server();
+  server.connection({ port: 80 });
+  server.register({
+    register: Goalie,
+    options,
+  }, cb);
+
+  server.route({ method: 'GET', path: '/', handler: (request, reply) => reply('Success!') });
+  return server;
+}
+
 describe('smoke test', () => {
-  it('registers without errors', () => {
-    const server = new Hapi.Server();
-    server.register({
-      register: Goalie,
-    }, err => {
+  it('registers without errors', done => {
+    makeServer({}, err => {
       expect(err).to.not.exist();
+      done();
     });
   });
 });
 
 describe('Goalie', () => {
-  it('appends api version response header when api-version header is not present');
+  it('appends api version response header when api-version header is not present', done => {
+    const apiVersion = '1.0.0';
+    const server = makeServer({ apiVersion });
+    server.inject('/', res => {
+      expect(res.headers['api-version']).to.equal(apiVersion);
+      done();
+    })
+  });
 
   describe('strict', () => {
     it('appends api version response header when client and api versions match exactly');
