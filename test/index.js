@@ -53,30 +53,28 @@ describe('Goalie', () => {
   });
 
   describe('strict', () => {
-    it('appends api version response header when client and api versions match exactly', done => {
+    it('appends api version response header when client and api versions match exactly', async () => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({ apiVersion, compatabilityMethod: 'strict' });
-      server.inject({
+      const server = await makeServer({ apiVersion, compatabilityMethod: 'strict' });
+      const res = await server.inject({
         url: '/',
         headers: { 'api-version': apiVersion },
-      }, res => {
-        expect(res.statusCode).to.equal(200);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
       });
+
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['api-version']).to.equal(apiVersion);
     });
 
-    it('responds with a 412 when the client and api versions do not match exactly', done => {
+    it('responds with a 412 when the client and api versions do not match exactly', async () => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({ apiVersion, compatabilityMethod: 'strict' });
-      server.inject({
+      const server = await makeServer({ apiVersion, compatabilityMethod: 'strict' });
+      const res = await server.inject({
         url: '/',
         headers: { 'api-version': 'not-v1.0.0' },
-      }, res => {
-        expect(res.statusCode).to.equal(412);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
       });
+
+      expect(res.statusCode).to.equal(412);
+      expect(res.headers['api-version']).to.equal(apiVersion);
     });
   });
 
