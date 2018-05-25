@@ -94,44 +94,40 @@ describe('Goalie', () => {
   });
 
   describe('semver', () => {
-    it('appends api version response header when client semver is satisfied by the api', done => {
-      const apiVersion = 'v1.0.0';
-      const server = makeServer({ apiVersion });
-      server.inject({
-        url: '/',
-        headers: { 'api-version': '^v1.0.0' },
-      }, res => {
-        expect(res.statusCode).to.equal(200);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
-      });
-    });
+    const cases = [{
+      apiVersion: 'v1.0.0',
+      requestVersion: '^v1.0.0',
+      code: 200,
+    }, {
+      apiVersion: 'v2.0.0',
+      requestVersion: '^v1.0.0',
+      code: 412,
+    }, {
+      apiVersion: 'v2.0.0',
+      requestVersion: 'gobbledegook',
+      code: 412,
+    }, {
+      apiVersion: 'v2.0.0',
+      requestVersion: '^v2.x',
+      code: 200,
+    }];
 
-    it('responds with a 412 when the client semver is not satisfied by the api', done => {
-      const apiVersion = 'v2.0.0';
-      const server = makeServer({ apiVersion });
-      server.inject({
-        url: '/',
-        headers: { 'api-version': '^v1.0.0' },
-      }, res => {
-        expect(res.statusCode).to.equal(412);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
-      });
-    });
+    for (let i = 0; i < cases.length; ++i) {
+      const testCase = cases[i];
 
-    it('does not fail spectacularly when the request api version is not a well formatted semver string', done => {
-      const apiVersion = 'v2.0.0';
-      const server = makeServer({ apiVersion });
-      server.inject({
-        url: '/',
-        headers: { 'api-version': 'GOBBLEDEGOOK' },
-      }, res => {
-        expect(res.statusCode).to.equal(412);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
+      it(`returns ${testCase.code} when apiVersion is ${testCase.apiVersion} and request version is ${testCase.requestVersion}`, done => {
+        const apiVersion = 'v1.0.0';
+        const server = makeServer({ apiVersion });
+        server.inject({
+          url: '/',
+          headers: { 'api-version': '^v1.0.0' },
+        }, res => {
+          expect(res.statusCode).to.equal(200);
+          expect(res.headers['api-version']).to.equal(apiVersion);
+          done();
+        });
       });
-    });
+    }
   });
 
   describe('callback', () => {
