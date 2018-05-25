@@ -134,22 +134,21 @@ describe('Goalie', () => {
     it('calls the callback with request api-version and current api version', done => {
       let called = false;
       const apiVersion = 'v1.0.0';
+      const requestVersion = 'v1.2.3';
       const server = makeServer({
         apiVersion,
         compatabilityMethod: (testRequestVersion, testApiVersion) => {
           called = true;
           expect(testApiVersion).to.equal(apiVersion);
-          expect(testRequestVersion).to.equal(apiVersion);
+          expect(testRequestVersion).to.equal(requestVersion);
         },
       });
 
       server.inject({
         url: '/',
-        headers: { 'api-version': apiVersion },
+        headers: { 'api-version': requestVersion },
       }, res => {
         expect(called).to.be.true();
-        expect(res.statusCode).to.equal(200);
-        expect(res.headers['api-version']).to.equal(apiVersion);
         done();
       });
     });
@@ -183,23 +182,6 @@ describe('Goalie', () => {
         headers: { 'api-version': apiVersion },
       }, res => {
         expect(res.statusCode).to.equal(412);
-        expect(res.headers['api-version']).to.equal(apiVersion);
-        done();
-      });
-    });
-
-    it('replies with a 500 error when the callback throws errors', done => {
-      const apiVersion = 'v1.0.0';
-      const server = makeServer({
-        apiVersion,
-        compatabilityMethod: () => y === x,
-      });
-
-      server.inject({
-        url: '/',
-        headers: { 'api-version': apiVersion },
-      }, res => {
-        expect(res.statusCode).to.equal(500);
         expect(res.headers['api-version']).to.equal(apiVersion);
         done();
       });
