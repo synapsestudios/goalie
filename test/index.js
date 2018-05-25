@@ -4,12 +4,13 @@ const { expect } = require('code');
 const { describe, it } = exports.lab = require('lab').script();
 
 describe('smoke test', () => {
-  it('registers without errors', () => {
+  it('registers without errors', done => {
     const server = new Hapi.Server();
     server.register({
       register: Goalie,
     }, err => {
       expect(err).to.not.exist();
+      done();
     });
   });
 });
@@ -31,6 +32,6 @@ describe('Goalie', () => {
     it('calls the callback with request api-version and current api version');
     it('appends api version response header when callback returns true');
     it('responds with a 412 when the callback returns false');
-  })
+  });
 });
 
