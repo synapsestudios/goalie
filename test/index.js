@@ -93,11 +93,13 @@ describe('Goalie', () => {
   describe('semver', () => {
     it('appends api version response header when client and api major version match exactly');
     it('responds with a 412 when the client and api major version do not match exactly');
+    it('does not fail spectacularly when the request api version is not a well formatted semver string');
   });
 
   describe('callback', () => {
     it('calls the callback with request api-version and current api version');
     it('appends api version response header when callback returns true');
     it('responds with a 412 when the callback returns false');
+    it('replies with a 500 error when the callback throws errors');
   })
 });
