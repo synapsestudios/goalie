@@ -68,7 +68,7 @@ describe('Goalie', () => {
   describe('strict', () => {
     it('appends api version response header when client and api versions match exactly', done => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({ apiVersion });
+      const server = makeServer({ apiVersion, compatabilityMethod: 'strict' });
       server.inject({
         url: '/',
         headers: { 'api-version': apiVersion },
@@ -81,7 +81,7 @@ describe('Goalie', () => {
 
     it('responds with a 412 when the client and api versions do not match exactly', done => {
       const apiVersion = 'v1.0.0';
-      const server = makeServer({ apiVersion });
+      const server = makeServer({ apiVersion, compatabilityMethod: 'strict' });
       server.inject({
         url: '/',
         headers: { 'api-version': 'not-v1.0.0' },
