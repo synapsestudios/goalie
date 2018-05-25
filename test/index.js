@@ -11,7 +11,10 @@ const makeServer = (options, cb) => {
     options,
   }, cb);
 
-  server.route({ method: 'GET', path: '/', handler: (request, reply) => reply('Success!') });
+  server.route({ method: 'GET', path: '/', handler: (request, reply) => {
+    console.log('called');
+    return reply('Success!')
+  } });
   return server;
 }
 
@@ -25,18 +28,48 @@ describe('smoke test', () => {
 });
 
 describe('Goalie', () => {
-  it('appends api version response header when api-version header is not present', done => {
-    const apiVersion = '1.0.0';
-    const server = makeServer({ apiVersion });
+  it('does nothing if api version is not supplied', done => {
+    const server = makeServer();
     server.inject('/', res => {
-      expect(res.headers['api-version']).to.equal(apiVersion);
+      expect(res.headers['api-version']).to.not.exist();
       done();
     })
   });
 
+  it('appends api version response header when api-version request header is not present', done => {
+    const apiVersion = 'v1.0.0';
+    const server = makeServer({ apiVersion });
+    server.inject('/', res => {
+      expect(res.headers['api-version']).to.equal(apiVersion);
+      done();
+    });
+  });
+
   describe('strict', () => {
-    it('appends api version response header when client and api versions match exactly');
-    it('responds with a 412 when the client and api versions do not match exactly');
+    it('appends api version response header when client and api versions match exactly', done => {
+      const apiVersion = 'v1.0.0';
+      const server = makeServer({ apiVersion });
+      server.inject({
+        url: '/',
+        headers: { 'api-version': apiVersion },
+      }, res => {
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
+
+    it('responds with a 412 when the client and api versions do not match exactly', done => {
+      const apiVersion = 'v1.0.0';
+      const server = makeServer({ apiVersion });
+      server.inject({
+        url: '/',
+        headers: { 'api-version': 'not-v1.0.0' },
+      }, res => {
+        expect(res.statusCode).to.equal(412);
+        expect(res.headers['api-version']).to.equal(apiVersion);
+        done();
+      });
+    });
   });
 
   describe('semver', () => {
@@ -50,4 +83,3 @@ describe('Goalie', () => {
     it('responds with a 412 when the callback returns false');
   })
 });
-
