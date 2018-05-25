@@ -11,9 +11,7 @@ const makeServer = async options => {
     options,
   });
 
-  server.route({ method: 'GET', path: '/', handler: (request, reply) => {
-    return reply('Success!');
-  } });
+  server.route({ method: 'GET', path: '/', handler: (request, reply) => 'Success!' });
   return server;
 };
 
@@ -25,7 +23,7 @@ describe('smoke test', () => {
 
 describe('Goalie', () => {
   it('does nothing if api version is not supplied', async () => {
-    const server = makeServer();
+    const server = await makeServer();
     const res = await server.inject('/');
     expect(res.statusCode).to.equal(200);
     expect(res.headers['api-version']).to.not.exist();
