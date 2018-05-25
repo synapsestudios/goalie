@@ -4,13 +4,12 @@ const Boom = require('boom');
 const { expect } = require('code');
 const { describe, it } = exports.lab = require('lab').script();
 
-const makeServer = (options, cb) => {
-  const server = new Hapi.Server();
-  server.connection({ port: 80 });
-  server.register({
-    register: Goalie,
+const makeServer = async options => {
+  const server = Hapi.Server({ port: 80 });
+  await server.register({
+    plugin: Goalie,
     options,
-  }, cb);
+  });
 
   server.route({ method: 'GET', path: '/', handler: (request, reply) => {
     return reply('Success!');
@@ -19,22 +18,17 @@ const makeServer = (options, cb) => {
 };
 
 describe('smoke test', () => {
-  it('registers without errors', done => {
-    makeServer({}, err => {
-      expect(err).to.not.exist();
-      done();
-    });
+  it('registers without errors', async () => {
+    await makeServer({});
   });
 });
 
 describe('Goalie', () => {
-  it('does nothing if api version is not supplied', done => {
+  it('does nothing if api version is not supplied', async () => {
     const server = makeServer();
-    server.inject('/', res => {
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['api-version']).to.not.exist();
-      done();
-    });
+    const res = await server.inject('/');
+    expect(res.statusCode).to.equal(200);
+    expect(res.headers['api-version']).to.not.exist();
   });
 
   it('appends api version response header when api-version request header is not present', done => {
