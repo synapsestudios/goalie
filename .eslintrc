@@ -1,0 +1,20 @@
+{
+  "extends": "hapi",
+  "rules": {
+    "array-bracket-spacing": ["off"],
+    "arrow-parens": ["warn", "as-needed"],
+    "brace-style": ["warn", "1tbs"],
+    "comma-dangle": ["warn", "always-multiline"],
+    "indent": ["warn", 2, { "SwitchCase": 2 }],
+    "require-await": ["off"],
+    "hapi/hapi-capitalize-modules": ["off"],
+    "hapi/hapi-scope-start": ["off"],
+    "space-before-function-paren": ["off"]
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
+  }
+}
