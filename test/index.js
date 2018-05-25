@@ -113,11 +113,11 @@ describe('Goalie', () => {
   });
 
   describe('callback', () => {
-    it('calls the callback with request api-version and current api version', done => {
+    it('calls the callback with request api-version and current api version', async () => {
       let called = false;
       const apiVersion = 'v1.0.0';
       const requestVersion = 'v1.2.3';
-      const server = makeServer({
+      const server = await makeServer({
         apiVersion,
         compatabilityMethod: (testRequestVersion, testApiVersion) => {
           called = true;
@@ -126,13 +126,11 @@ describe('Goalie', () => {
         },
       });
 
-      server.inject({
+      const res = await server.inject({
         url: '/',
         headers: { 'api-version': requestVersion },
-      }, res => {
-        expect(called).to.be.true();
-        done();
       });
+      expect(called).to.be.true();
     });
 
     it('appends api version response header when callback returns true', done => {
