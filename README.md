@@ -19,7 +19,7 @@ const Goalie = require('../lib');
 
 const server = new Hapi.Server();
 
-server.register({
+await server.register({
   register: Goalie,
   { apiVersion: 'v1.0.0' },
 });
@@ -31,7 +31,7 @@ By default goalie uses the npm semver module to determine version compatability.
 
 ```
 // use strict
-server.register({
+await server.register({
   register: Goalie,
   {
     apiVersion: 'v1.0.0',
@@ -41,7 +41,7 @@ server.register({
 
 
 // or use a callback
-server.register({
+await server.register({
   register: Goalie,
   {
     apiVersion: 'v1.0.0',
