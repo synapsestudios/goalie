@@ -55,7 +55,7 @@ describe('Goalie', () => {
   describe('strict', () => {
     it('appends api version response header when client and api versions match exactly', async () => {
       const apiVersion = 'v1.0.0';
-      const server = await makeServer({ apiVersion, compatabilityMethod: 'strict' });
+      const server = await makeServer({ apiVersion, compatibilityMethod: 'strict' });
       const res = await server.inject({
         url: '/',
         headers: { 'api-version': apiVersion },
@@ -67,7 +67,7 @@ describe('Goalie', () => {
 
     it('responds with a 412 when the client and api versions do not match exactly', async () => {
       const apiVersion = 'v1.0.0';
-      const server = await makeServer({ apiVersion, compatabilityMethod: 'strict' });
+      const server = await makeServer({ apiVersion, compatibilityMethod: 'strict' });
       const res = await server.inject({
         url: '/',
         headers: { 'api-version': 'not-v1.0.0' },
@@ -122,7 +122,7 @@ describe('Goalie', () => {
 
       const server = await makeServer({
         apiVersion,
-        compatabilityMethod: (testRequestVersion, testApiVersion) => {
+        compatibilityMethod: (testRequestVersion, testApiVersion) => {
           called = true;
           calledValues = {
             testApiVersion,
@@ -144,7 +144,7 @@ describe('Goalie', () => {
       const apiVersion = 'v1.0.0';
       const server = await makeServer({
         apiVersion,
-        compatabilityMethod: () => true,
+        compatibilityMethod: () => true,
       });
 
       const res = await server.inject({
@@ -159,7 +159,7 @@ describe('Goalie', () => {
       const apiVersion = 'v1.0.0';
       const server = await makeServer({
         apiVersion,
-        compatabilityMethod: () => false,
+        compatibilityMethod: () => false,
       });
 
       const res = await server.inject({
