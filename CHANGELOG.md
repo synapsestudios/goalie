@@ -1,3 +1,6 @@
+## [v3.0.0] - 2018-08-13
+- Updated to work with Hapi 19, please check the readme for new implementation instructions
+
 ## [v2.0.0] - 2018-08-13
 - Updated to work with Hapi 17, please check the readme for new implementation instructions
 

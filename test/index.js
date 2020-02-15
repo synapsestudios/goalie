@@ -1,8 +1,10 @@
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
+const Boom = require('@hapi/boom');
+const { expect } = require('@hapi/code');
+
+const { describe, it } = exports.lab = require('@hapi/lab').script();
+
 const Goalie = require('../lib');
-const Boom = require('boom');
-const { expect } = require('code');
-const { describe, it } = exports.lab = require('lab').script();
 
 const makeServer = async options => {
   const server = Hapi.Server({ port: 80 });
