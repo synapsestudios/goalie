@@ -1,5 +1,5 @@
 {
-  "extends": "hapi",
+  "extends": "@hapi/hapi",
   "rules": {
     "array-bracket-spacing": ["off"],
     "arrow-parens": ["warn", "as-needed"],
@@ -12,7 +12,7 @@
     "space-before-function-paren": ["off"]
   },
   "parserOptions": {
-    "ecmaVersion": 2017,
+    "ecmaVersion": 2020,
     "ecmaFeatures": {
       "impliedStrict": true
     }
