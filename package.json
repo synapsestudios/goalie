@@ -1,10 +1,10 @@
 {
   "name": "@synapsestudios/goalie",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Goalie is a hapi plugin that monitors requests for an api-version header and will return a 412 instead of running handlers when a version mismatch is detected.",
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab -vL -a code"
+    "test": "lab -vL -a @hapi/code"
   },
   "repository": {
     "type": "git",
@@ -17,15 +17,15 @@
   },
   "homepage": "https://github.com/synapsestudios/goalie#readme",
   "devDependencies": {
-    "code": "^5.2.0",
-    "eslint": "^4.19.1",
-    "hapi": "^17.5.0",
-    "lab": "^15.4.5"
+    "@hapi/code": "^8.0.1",
+    "@hapi/hapi": "^19.1.1",
+    "@hapi/lab": "^22.0.3",
+    "eslint": "^6.8.0"
   },
   "peerDependencies": {
-    "hapi": "17.x.x"
+    "@hapi/hapi": "19.x.x"
   },
   "dependencies": {
-    "semver": "^5.5.0"
+    "semver": "^7.1.3"
   }
 }

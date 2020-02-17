@@ -1,10 +1,13 @@
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
+const Boom = require('@hapi/boom');
+const { expect } = require('@hapi/code');
+
+const { describe, it } = exports.lab = require('@hapi/lab').script();
+
 const Goalie = require('../lib');
-const Boom = require('boom');
-const { expect } = require('code');
-const { describe, it } = exports.lab = require('lab').script();
 
 const makeServer = async options => {
+
   const server = Hapi.Server({ port: 80 });
   await server.register({
     plugin: Goalie,
@@ -16,13 +19,17 @@ const makeServer = async options => {
 };
 
 describe('smoke test', () => {
+
   it('registers without errors', async () => {
+
     await makeServer({});
   });
 });
 
 describe('Goalie', () => {
+
   it('does nothing if api version is not supplied', async () => {
+
     const server = await makeServer();
     const res = await server.inject('/');
     expect(res.statusCode).to.equal(200);
@@ -30,6 +37,7 @@ describe('Goalie', () => {
   });
 
   it('appends api version response header when api-version request header is not present', async () => {
+
     const apiVersion = 'v1.0.0';
     const server = await makeServer({ apiVersion });
     const res = await server.inject('/');
@@ -39,6 +47,7 @@ describe('Goalie', () => {
   });
 
   it('appends api-version to error response', async () => {
+
     const server = Hapi.Server({ port: 80 });
     await server.register({
       plugin: Goalie,
@@ -53,9 +62,11 @@ describe('Goalie', () => {
   });
 
   describe('strict', () => {
+
     it('appends api version response header when client and api versions match exactly', async () => {
+
       const apiVersion = 'v1.0.0';
-      const server = await makeServer({ apiVersion, compatabilityMethod: 'strict' });
+      const server = await makeServer({ apiVersion, compatibilityMethod: 'strict' });
       const res = await server.inject({
         url: '/',
         headers: { 'api-version': apiVersion },
@@ -66,8 +77,9 @@ describe('Goalie', () => {
     });
 
     it('responds with a 412 when the client and api versions do not match exactly', async () => {
+
       const apiVersion = 'v1.0.0';
-      const server = await makeServer({ apiVersion, compatabilityMethod: 'strict' });
+      const server = await makeServer({ apiVersion, compatibilityMethod: 'strict' });
       const res = await server.inject({
         url: '/',
         headers: { 'api-version': 'not-v1.0.0' },
@@ -79,6 +91,7 @@ describe('Goalie', () => {
   });
 
   describe('semver', () => {
+
     const cases = [{
       apiVersion: 'v1.0.0',
       requestVersion: '^v1.0.0',
@@ -101,6 +114,7 @@ describe('Goalie', () => {
       const testCase = cases[i];
 
       it(`returns ${testCase.code} when apiVersion is ${testCase.apiVersion} and request version is ${testCase.requestVersion}`, async () => {
+
         const server = await makeServer({ apiVersion: testCase.apiVersion });
         const res = await server.inject({
           url: '/',
@@ -113,7 +127,9 @@ describe('Goalie', () => {
   });
 
   describe('callback', () => {
+
     it('calls the callback with request api-version and current api version', async () => {
+
       let called = false;
       let calledValues = {};
 
@@ -122,7 +138,8 @@ describe('Goalie', () => {
 
       const server = await makeServer({
         apiVersion,
-        compatabilityMethod: (testRequestVersion, testApiVersion) => {
+        compatibilityMethod: (testRequestVersion, testApiVersion) => {
+
           called = true;
           calledValues = {
             testApiVersion,
@@ -141,10 +158,11 @@ describe('Goalie', () => {
     });
 
     it('appends api version response header when callback returns true', async () => {
+
       const apiVersion = 'v1.0.0';
       const server = await makeServer({
         apiVersion,
-        compatabilityMethod: () => true,
+        compatibilityMethod: () => true,
       });
 
       const res = await server.inject({
@@ -156,10 +174,11 @@ describe('Goalie', () => {
     });
 
     it('responds with a 412 when the callback returns false', async () => {
+
       const apiVersion = 'v1.0.0';
       const server = await makeServer({
         apiVersion,
-        compatabilityMethod: () => false,
+        compatibilityMethod: () => false,
       });
 
       const res = await server.inject({
