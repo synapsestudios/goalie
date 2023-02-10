@@ -1,0 +1,20 @@
+name: "Check PR"
+on: pull_request
+concurrency:
+  group: pr-${{ github.head_ref }}
+  cancel-in-progress: true
+jobs:
+  Check_PR:
+    name: "Check PR"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 12
+      - uses: actions/cache@v3
+        with:
+          path: ".npm-cache"
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+      - run: npm ci --cache .npm-cache --prefer-offline
+      - run: npm test
