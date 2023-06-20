@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/synapsestudios/goalie#readme",
   "devDependencies": {
-    "@hapi/code": "^8.0.1",
+    "@hapi/code": "^9.0.3",
     "@hapi/hapi": "^20.3.0",
     "@hapi/lab": "^25.1.2",
     "eslint": "^8.43.0"
