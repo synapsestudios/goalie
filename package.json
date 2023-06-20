@@ -19,7 +19,7 @@
   "devDependencies": {
     "@hapi/code": "^8.0.1",
     "@hapi/hapi": "^20.3.0",
-    "@hapi/lab": "^22.0.3",
+    "@hapi/lab": "^25.1.2",
     "eslint": "^8.43.0"
   },
   "peerDependencies": {
