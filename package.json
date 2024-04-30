@@ -20,7 +20,7 @@
     "@hapi/code": "^9.0.3",
     "@hapi/hapi": "^20.3.0",
     "@hapi/lab": "^25.1.2",
-    "eslint": "^8.43.0"
+    "eslint": "^9.1.1"
   },
   "peerDependencies": {
     "@hapi/hapi": "19.x.x || 20.x.x"
